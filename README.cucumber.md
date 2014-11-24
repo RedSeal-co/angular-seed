@@ -6,8 +6,8 @@ Cucumber Usage
 The first step is to create a directory named "features".  Cucumber will look for
 *.feature files contained in this directory.
 
-After putting a couple of files in there (based on the end-to-end tests written in
-Karma with Protractor), Cucumber will produce output like this:
+After putting a couple of files in there (based on the end-to-end tests written for
+Karma, Jasime, and Protractor), Cucumber will produce output like this:
 
 <pre>
 $ ./node_modules/cucumber/bin/cucumber.js --format pretty
