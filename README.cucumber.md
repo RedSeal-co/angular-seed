@@ -155,7 +155,6 @@ our backend is minimal, consisting of a simple HTTP server.
     // Create a node-static server instance to serve the project root directory.
     var staticServer = new nodeStatic.Server('./');
     // Create an HTTP server.
-    console.log('Launching HTTP server.');
     http.createServer(function (request, response) {
       request.addListener('end', function() {
         staticServer.serve(request, response);
@@ -168,11 +167,9 @@ our backend is minimal, consisting of a simple HTTP server.
       runScenario(function (callback) {
         // Shut down the browser.
         var world = this;
-        console.log('Quitting the browser.');
         world.browser.quit()
           .then(function () {
             // Shut down the HTTP server.
-            console.log('Shutting down HTTP server.');
             httpServer.close(callback);
           });
       });
@@ -193,4 +190,12 @@ Next, we can run Cucumber.  We have this hooked up to an npm script:
 
 ```
 $ npm run cucumber
+
+> angular-seed@0.0.0 cucumber /home/mattfrantz/angular-seed
+> cucumber.js
+
+............
+
+2 scenarios (2 passed)
+8 steps (8 passed)
 ```
