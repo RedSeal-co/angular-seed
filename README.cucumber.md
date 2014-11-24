@@ -142,3 +142,55 @@ module.exports = steps;
 With this in place, we can now start to implement the steps in view-steps.js.  In
 particular, we can refer to `this.browser` to refer to the Selenium WebDriver
 object.  A new browser is instantiated for each scenario.
+
+### Launching the Backend
+
+In order to accomplish integration testing, we want to run our backend along with
+our client (in the browser).  We can do this with an `Around` construct, which
+allows us to run complementary code before and after each scenario.  In this case,
+our backend is minimal, consisting of a simple HTTP server.
+
+```js
+  this.Around(function (runScenario) {
+    // Create a node-static server instance to serve the project root directory.
+    var staticServer = new nodeStatic.Server('./');
+    // Create an HTTP server.
+    console.log('Launching HTTP server.');
+    http.createServer(function (request, response) {
+      request.addListener('end', function() {
+        staticServer.serve(request, response);
+      }).resume();
+    }).listen(8000, function (err) {
+      assert(!err);
+      var httpServer = this;
+
+      // Now run the scenario, with our clean-up "after" code as a callback.
+      runScenario(function (callback) {
+        // Shut down the browser.
+        var world = this;
+        console.log('Quitting the browser.');
+        world.browser.quit()
+          .then(function () {
+            // Shut down the HTTP server.
+            console.log('Shutting down HTTP server.');
+            httpServer.close(callback);
+          });
+      });
+    });
+  });
+```
+
+### Running tests
+
+Because we use Selenium, we must run the Selenium server as a separate process.  We
+can just keep this running.
+
+```
+$ ~/angular-seed/node_modules/.bin/webdriver-manager start &
+```
+
+Next, we can run Cucumber.  We have this hooked up to an npm script:
+
+```
+$ npm run cucumber
+```
