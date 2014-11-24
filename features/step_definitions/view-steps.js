@@ -25,22 +25,26 @@ var wrapper = function() {
     var staticServer = new nodeStatic.Server('./');
     // Create an HTTP server.
     console.log('Launching HTTP server.');
-    var httpServer = http.createServer(function (request, response) {
+    http.createServer(function (request, response) {
       request.addListener('end', function() {
         staticServer.serve(request, response);
       }).resume();
-    }).listen(8000);
+    }).listen(8000, function (err) {
+      assert(!err);
+      var httpServer = this;
 
-    // Now run the scenario, with our clean-up "after" code as a callback.
-    runScenario(function (callback) {
-      // Shut down the browser.
-      console.log('Quitting the browser.');
-      this.browser.quit()
-        .then(function () {
-          // Shut down the HTTP server.
-          console.log('Shutting down HTTP server.');
-          httpServer.close(callback);
-        });
+      // Now run the scenario, with our clean-up "after" code as a callback.
+      runScenario(function (callback) {
+        // Shut down the browser.
+        var world = this;
+        console.log('Quitting the browser.');
+        world.browser.quit()
+          .then(function () {
+            // Shut down the HTTP server.
+            console.log('Shutting down HTTP server.');
+            httpServer.close(callback);
+          });
+      });
     });
   });
 
