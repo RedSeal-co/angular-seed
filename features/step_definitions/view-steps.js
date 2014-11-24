@@ -24,7 +24,6 @@ var wrapper = function() {
     // Create a node-static server instance to serve the project root directory.
     var staticServer = new nodeStatic.Server('./');
     // Create an HTTP server.
-    console.log('Launching HTTP server.');
     http.createServer(function (request, response) {
       request.addListener('end', function() {
         staticServer.serve(request, response);
@@ -37,11 +36,9 @@ var wrapper = function() {
       runScenario(function (callback) {
         // Shut down the browser.
         var world = this;
-        console.log('Quitting the browser.');
         world.browser.quit()
           .then(function () {
             // Shut down the HTTP server.
-            console.log('Shutting down HTTP server.');
             httpServer.close(callback);
           });
       });
@@ -65,7 +62,6 @@ var wrapper = function() {
         return firstElement.getText();
       })
       .then(function (text) {
-        console.log('text: ' + text);
         assert(text == 'This is the partial for view ' + viewNumber + '.');
         callback();
       });
